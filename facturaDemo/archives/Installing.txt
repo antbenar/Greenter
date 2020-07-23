@@ -1,0 +1,27 @@
+Instalar php
+Activar la extensión soap (quitar el ';' delante de ";extension=soap")
+
+------------------------------------------------------------------------
+
+Clonar el repositorio en la carpeta deseada e instalar las dependencias:
+
+git clone https://github.com/giansalex/greenter-sample.git
+cd greenter-sample
+composer install --no-dev -o
+
+------------------------------------------------------------------------'
+run 
+cmd ->     php -S 0.0.0.0:8080
+browser -> http://localhost:8080
+
+
+
+
+----------------------------------------------------------------------------
+- Install XAMPP
+- Abrir el panel de control
+- Hacer click en Admin del costado de MySQL
+- .. seguir el tutorial del siguiente link: https://www.quora.com/Where-do-I-find-my-localhost-name-and-my-user-name-on-phpMyAdmin
+- configurar user como 'admin' y nopassword
+
+

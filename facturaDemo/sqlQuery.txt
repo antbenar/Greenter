@@ -1,0 +1,108 @@
+/*
+
+//solucionar problema  link:
+https://stackoverflow.com/questions/6445917/connect-failed-access-denied-for-user-rootlocalhost-using-password-yes
+CREATE USER 'admin'@'localhost' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON Restaurant.* TO 'admin'@'localhost';
+
+
+mysql -u root
+*/
+
+CREATE DATABASE Restaurant;
+
+USE Restaurant;
+
+CREATE TABLE Inventario
+(
+	codigo INT NOT NULL AUTO_INCREMENT,
+	nombre varchar(100) NOT NULL,
+	precioVenta DECIMAL(7,2) NOT NULL,
+	precioVentaConIGV DECIMAL(7,2) NOT NULL,
+	unidad varchar(10) NOT NULL,
+	precioCompra DECIMAL(7,2) NOT NULL,
+	cantidad INT NOT NULL,
+	claveSunat varchar(10),
+	CONSTRAINT INVENTARIO_PK PRIMARY KEY (codigo)
+); 
+
+CREATE TABLE UpdateInventario
+(
+	codigo INT NOT NULL AUTO_INCREMENT,
+	codInventario INT NOT NULL,
+	aumento INT NOT NULL,
+	cantidad INT NOT NULL,
+	fecha DATETIME NOT NULL,
+	CONSTRAINT UPDATEINVENTARIO_PK PRIMARY KEY (codigo),
+	CONSTRAINT FK_INVENTARIO FOREIGN KEY (codInventario) REFERENCES Inventario(codigo)
+); 
+
+CREATE TABLE cliente
+(
+  codigo int(11) NOT NULL AUTO_INCREMENT,
+  nombre varchar(100) NOT NULL,
+  tipoDoc varchar(20) NOT NULL,
+  numDoc varchar(20) NOT NULL,
+  direccion varchar(100) DEFAULT NULL,
+  email varchar(50) DEFAULT NULL,
+  telefono varchar(20) DEFAULT NULL,
+  fecha datetime NOT NULL,
+  PRIMARY KEY (numDoc) ,
+  KEY (codigo)     
+);
+
+CREATE TABLE Documento
+(
+	codigo INT NOT NULL AUTO_INCREMENT,
+	codigoDocModificado INT,/*para nota de crédito y debito*/
+    tipoDoc varchar(1) NOT NULL,
+	serie varchar(4) NOT NULL,
+	correlativo INT NOT NULL,
+	fecha datetime,
+	opGravadas DECIMAL(7,2),
+	opExoneradas DECIMAL(7,2),
+	montoIGV DECIMAL(7,2),
+	clienteDoc varchar(20),
+	vigente INT,
+	CONSTRAINT DOC_PK PRIMARY KEY (codigo),
+    CONSTRAINT FK_DOC_Client FOREIGN KEY (clienteDoc) REFERENCES cliente(numDoc),
+    CONSTRAINT FK_DOC_Documento FOREIGN KEY (codigoDocModificado) REFERENCES Documento(codigo)
+); 
+
+INSERT INTO Documento(tipoDoc, serie, correlativo) VALUES('B','B001',0);
+INSERT INTO Documento(tipoDoc, serie, correlativo) VALUES('F','F001',0);
+
+
+CREATE TABLE DocumentoNota
+(
+	codigo INT NOT NULL AUTO_INCREMENT,
+	codigoDocModificado INT,/*para nota de crédito y debito*/
+    tipoDoc varchar(1) NOT NULL,
+    codMotivo INT NULL,
+	serie varchar(4) NOT NULL,
+	correlativo INT NOT NULL,
+	fecha datetime,
+	descripcion varchar(50),
+	CONSTRAINT DOC_PK PRIMARY KEY (codigo),
+    CONSTRAINT FK_DOCNotas_Documento FOREIGN KEY (codigoDocModificado) REFERENCES Documento(codigo)
+); 
+
+
+INSERT INTO DocumentoNota(tipoDoc, serie, correlativo) VALUES('C','FC01',0);
+INSERT INTO DocumentoNota(tipoDoc, serie, correlativo) VALUES('C','BC01',0);
+INSERT INTO DocumentoNota(tipoDoc, serie, correlativo) VALUES('D','FD01',0);
+INSERT INTO DocumentoNota(tipoDoc, serie, correlativo) VALUES('D','BD01',0);
+
+CREATE TABLE InventarioXDocumento
+(
+	codigoInv INT NOT NULL,
+    codigoDoc INT NOT NULL,
+	cantidad INT NOT NULL,
+	fecha datetime,
+	precioVenta DECIMAL(7,2),
+	montoIGV DECIMAL(7,2),
+	CONSTRAINT DOC_PK PRIMARY KEY (codigoInv, codigoDoc),
+    CONSTRAINT FK_DOCUMENTO_INV FOREIGN KEY (codigoDoc) REFERENCES Documento(codigo),
+    CONSTRAINT FK_INVENTARIO_DOC FOREIGN KEY (codigoInv) REFERENCES Inventario(codigo)
+); 
+
